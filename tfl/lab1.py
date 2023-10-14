@@ -173,7 +173,7 @@ def create_mes1(res, res2):
     Mas = []
     Mas.append(mas)
     Mas.append(mas2)
-    print(Mas, "Mrs")
+    #print(Mas, "Mrs")
 
     message1 = '(assert (>='
 
@@ -288,7 +288,7 @@ def main():
     
     for s in allStr:
         parts.append(s.split(" -> "))
-    print(parts, "============")
+    #print(parts, "============")
     parameters1 = count_parameters(parts[0][0], funcs)
     parameters2 = count_parameters(parts[0][1], funcs)
     for func, count in parameters2.items():
@@ -314,8 +314,7 @@ def main():
     print(coefs_in_one)
     res1 = create_ner(parts[0][0])
     res2 = create_ner(parts[0][1])
-    print(res1)
-    print(res2, ' 0')
+    
 
     qwe = []
     for i in range(len(variables)):
@@ -329,10 +328,7 @@ def main():
 
     
 
-    resMas = []
-    resMas.append(res1)
-    resMas.append(res2)
-    print(resMas, '\n')
+
     message += '\n' + create_mes3(qwe) + '\n'
 
     message += create_mes4() + '\n' + '\n'
@@ -345,9 +341,7 @@ def main():
     for i in parameters_count:
         print(parameters_count[i])
 
-    #print(count)
-    print('\n',variables)
-    print(funcs)
+    
 
 
     f = open("lab1.smt2", "w")
