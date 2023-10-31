@@ -55,7 +55,7 @@ def sopr(A, b, x, max_iterations=1000, tolerance=1e-3):
 
 
 
-n = 80
+n = 640
 a = []
 b = []
 x = [0.01] * n
@@ -81,4 +81,4 @@ if rank == size - 1:
     print(round((et - st), 3), "s")
 
 
-# mpiexec -n 2 /Library/Frameworks/Python.framework/Versions/3.11/bin/python3 lab2.py
+# mpiexec -n 8 /Library/Frameworks/Python.framework/Versions/3.11/bin/python3 lab2.py

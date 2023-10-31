@@ -238,6 +238,7 @@ def create_mes3(mas):
     '''print(mas)
     print(res)'''
     return res
+
 def create_mes4():
     global parameters_count
     ms = '(assert (and'
