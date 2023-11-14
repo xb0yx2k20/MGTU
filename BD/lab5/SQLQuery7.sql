@@ -1,0 +1,9 @@
+USE lab3;
+GO
+CREATE SCHEMA MySchema;
+GO
+ALTER SCHEMA MySchema
+TRANSFER Auto;
+GO
+DROP TABLE MySchema.Auto;
+DROP SCHEMA MySchema;
