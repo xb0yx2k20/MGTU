@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": ["${workspaceFolder}/**"],
+            "defines": [],
+            "macFrameworkPath": [],
+            "compilerPath": "/usr/bin/gcc",  // Укажите свой путь к компилятору
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64",
+            "compilerArgs": ["-arch", "arm64"],  // Добавьте этот аргумент для архитектуры M1
+            "browse": {
+                "path": ["${workspaceFolder}"],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            }
+        }
+    ],
+    "version": 4
+}
