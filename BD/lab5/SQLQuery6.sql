@@ -1,0 +1,13 @@
+USE lab3;
+
+ALTER DATABASE lab3
+MODIFY FILEGROUP [PRIMARY] DEFAULT;
+
+INSERT INTO Auto(VIN, Engine_type, Year_auto, Mark, Model)
+SELECT VIN, Engine_type, Year_auto, Mark, Model
+FROM Auto2;
+DROP TABLE Auto2;
+ALTER DATABASE lab3
+REMOVE FILE fileForFileGroup1;
+ALTER DATABASE lab3
+REMOVE FILEGROUP MyFileGroup;

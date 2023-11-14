@@ -1,0 +1,13 @@
+USE lab3;
+ALTER DATABASE lab3
+ADD FILEGROUP MyFileGroup;
+ALTER DATABASE lab3
+ADD FILE
+(
+	NAME = 'fileForFileGroup1',
+	FILENAME = 'C:\lab1\fileForFileGroup1.ndf',
+	SIZE = 10MB,
+	MAXSIZE = UNLIMITED,
+	FILEGROWTH = 5MB
+)
+TO FILEGROUP MyFileGroup;
