@@ -5,7 +5,7 @@ use lab6
 -- Создание таблицы Orders
 CREATE TABLE Contract
 (
-    ContrID INT PRIMARY KEY,
+    ContrID INT IDENTITY(1,1) PRIMARY KEY,
     Place NVARCHAR(50),
 	Price INT
 );
@@ -27,3 +27,16 @@ CREATE TABLE Auto4 (
 
 INSERT INTO Auto4(Year_auto, Mark, Model)
 VALUES (2014, 'bmw', 'x5')
+
+
+-- Используем NO ACTION (по умолчанию)
+DELETE FROM Contract WHERE Place = 'berlin';
+
+
+
+
+
+
+
+select * from Contract
+select * from Auto4

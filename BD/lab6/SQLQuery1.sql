@@ -1,5 +1,5 @@
-/*CREATE DATABASE LAB6
-GO*/
+CREATE DATABASE LAB6
+GO
 -- Создание таблицы с автоинкрементным первичным ключом
 USE LAB6
 CREATE TABLE Auto (
