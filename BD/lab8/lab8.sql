@@ -102,7 +102,7 @@ GO
 
 --Пункт 4
 -- Создание табличной функции
-IF OBJECT_ID(N'dbo.GetCarInfo', N'F') IS NOT NULL
+IF OBJECT_ID(N'dbo.GetCarInfo', N'IF') IS NOT NULL
     DROP FUNCTION dbo.GetCarInfo;
 GO
 
