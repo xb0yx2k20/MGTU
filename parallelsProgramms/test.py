@@ -1,28 +1,41 @@
-import numpy as np
-from numba import njit, prange
+from typing import Any
 
-@njit(parallel=True)
-def sopr(A, b, x, max_iterations=1000, tolerance=1e-3):
-    r = b - np.dot(A, x)
-    p = r.copy()
-    
-    for i in range(max_iterations):
-        alpha = np.dot(r, r) / np.dot(p, np.dot(A, p))
-        x = x + alpha * p
-        r_next = r - alpha * np.dot(A, p)
-        beta = np.dot(r_next, r_next) / np.dot(r, r)
-        p = r_next + beta * p
-        r = r_next
-        if (np.linalg.norm(r) / np.linalg.norm(b)) < tolerance:
-            break
+from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure
+from celery import Celery
+from celery.signals import worker_process_init, worker_process_shutdown
 
-    return x
 
-# Пример использования
-A = np.array([[4.0, 1.0], [1.0, 3.0]])
-b = np.array([3.0, 4.0])
-x = np.zeros_like(b)
+celery_app = Celery(__name__)
+celery_app.conf.broker_url = ""
+celery_app.conf.result_backend = ""
 
-result = sopr(A, b, x)
+# MongoDB setup
+client = None
+db = None
+collection = None
 
-print("Result:", result)
+
+@worker_process_init.connect
+def init_worker(**_kwargs: Any) -> None:
+    """
+    Will be run on initialization of each worker. When you run 12 workers, you will need to have
+    12 database connections. Here you can get them.
+    """
+    global client, db, collection
+    if client := MongoClient(""):
+        db = getattr(client, "")
+        collection = db[""]
+    else:
+        raise ConnectionFailure(
+            "Cannot connect to database. Please check your config and network settings."
+        )
+
+
+@worker_process_shutdown.connect
+def shutdown_worker(**_kwargs: Any) -> None:
+    """
+    Shutdown everything at the end of a worker’s lifetime, e.g. database connections
+    """
+    if client:
+        client.close()
