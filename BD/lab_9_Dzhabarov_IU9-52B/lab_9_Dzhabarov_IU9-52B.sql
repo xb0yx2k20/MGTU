@@ -163,23 +163,23 @@ GO
 IF OBJECT_ID(N'dbo.TRIGGER33', N'TR') IS NOT NULL
     DROP TRIGGER dbo.TRIGGER33;
 GO
-/*
+
 CREATE TRIGGER TRIGGER33
-ON Auto4VIEW
+ON ViewCustContr
 INSTEAD OF UPDATE
 AS
 BEGIN
     UPDATE Contract
-    SET Place = i.Place
+    SET Place = i.Place, Price = i.Price
     FROM Contract c
     INNER JOIN inserted i ON c.ContrID = i.ContrID;
 
     UPDATE CUSTOMERS
-    SET NAME = i.NAME
+    SET Year_birth = i.Year_birth, NAME = i.NAME, SURNAME = i.SURNAME
     FROM CUSTOMERS cu
     INNER JOIN inserted i ON cu.ContrID = i.ContrID;
 END;
-GO*/
+GO
 
 
 
@@ -189,14 +189,21 @@ GO
 
 
 DELETE FROM ViewCustContr
-WHERE ContrID = 30;
+WHERE ContrID = 36;
 GO
-SELECT * FROM Auto4
+
+UPDATE ViewCustContr
+SET Name = 'chinese'
+WHERE ContrID = 35;
+UPDATE ViewCustContr
+SET Price = 987654
+WHERE ContrID = 35;
+UPDATE ViewCustContr
+SET Year_birth = 1800
+WHERE ContrID = 35;
 GO
-/*UPDATE ViewCustContr
-SET Place = 'italy', Name = 'italyanets'
-WHERE ContrID = 31;
-GO*/
+
+
 SELECT * FROM CUSTOMERS
 SELECT * FROM Contract
 GO
