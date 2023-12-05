@@ -1,5 +1,45 @@
 USE lab6;
+/*
+IF OBJECT_ID(N'dbo.CUSTOMERS', N'U') IS NOT NULL
+    DROP TABLE dbo.CUSTOMERS;
+GO
+CREATE TABLE CUSTOMERS (
+	ID INT IDENTITY(1,1) PRIMARY KEY,
+	Year_birth INT NOT NULL,
+	NAME CHAR(100) NOT NULL,
+	SURNAME CHAR(100) NOT NULL,
+	FullName AS NAME + SURNAME,
+	ContrID INT FOREIGN KEY REFERENCES Contract(ContrID) ON DELETE NO ACTION
+);*/
 
+/*
+INSERT INTO CUSTOMERS(Year_birth, NAME, SURNAME, ContrID)
+VALUES (2006, 'QWER', 'SHGB', 3),
+	   (1991, 'KK,', 'GGO;/G', 4);
+SELECT * FROM CUSTOMERS
+*/
+/*
+IF OBJECT_ID(N'dbo.ViewCustContr', N'V') IS NOT NULL
+    DROP VIEW dbo.ViewCustContr;
+GO
+CREATE VIEW ViewCustContr
+WITH SCHEMABINDING
+AS
+SELECT C.ContrID, C.Place, C.Price, A.ID, A.Year_birth, A.NAME, A.SURNAME, A.FullName
+FROM dbo.Contract C
+JOIN dbo.CUSTOMERS A ON C.ContrID = A.ContrID;
+GO
+*/
+
+
+
+
+
+
+
+
+
+/*
 ----------------------------------------------------------- 1
 -- Вставка
 IF OBJECT_ID(N'dbo.TRIGGER1', N'TR') IS NOT NULL
@@ -74,22 +114,29 @@ WHERE VIN = 123457;
 GO
 SELECT * FROM Auto
 GO
-
+*/
 
 ----------------------------------------------------------- 2
 -- Добавление
+
+
 IF OBJECT_ID(N'dbo.TRIGGER11', N'TR') IS NOT NULL
     DROP TRIGGER dbo.TRIGGER11;
 GO
 
 CREATE TRIGGER TRIGGER11
-ON Auto4View
+ON ViewCustContr
 INSTEAD OF INSERT
 AS
 BEGIN
-    INSERT INTO Auto4 (Engine_type, Year_auto, Mark, Model, ContrID)
-    SELECT Engine_type, Year_auto, Mark, Model, ContrID
-    FROM inserted;
+    INSERT INTO Contract (Place, Price)
+    SELECT i.Place, i.Price
+    FROM inserted i;
+
+    -- Вставка данных в CUSTOMERS с использованием SCOPE_IDENTITY() для получения последнего значения ContrID
+    INSERT INTO CUSTOMERS (Year_birth, NAME, SURNAME, ContrID)
+    SELECT i.Year_birth, i.NAME, i.SURNAME, SCOPE_IDENTITY()
+    FROM inserted i;
 END;
 GO
 
@@ -100,12 +147,15 @@ IF OBJECT_ID(N'dbo.TRIGGER22', N'TR') IS NOT NULL
 GO
 
 CREATE TRIGGER TRIGGER22
-ON Auto4View
+ON ViewCustContr
 INSTEAD OF DELETE
 AS
 BEGIN
-    DELETE FROM Auto4
+    DELETE FROM CUSTOMERS
     WHERE ContrID IN (SELECT ContrID FROM deleted);
+	/*
+    DELETE FROM Contract
+    WHERE ContrID IN (SELECT ContrID FROM deleted);*/
 END;
 GO
 
@@ -113,37 +163,40 @@ GO
 IF OBJECT_ID(N'dbo.TRIGGER33', N'TR') IS NOT NULL
     DROP TRIGGER dbo.TRIGGER33;
 GO
-
+/*
 CREATE TRIGGER TRIGGER33
-ON Auto4View
+ON Auto4VIEW
 INSTEAD OF UPDATE
 AS
 BEGIN
-    UPDATE A
-    SET A.Engine_type = i.Engine_type,
-        A.Year_auto = i.Year_auto,
-        A.Mark = i.Mark,
-        A.Model = i.Model,
-        A.ContrID = i.ContrID
-    FROM Auto4 A
-    INNER JOIN inserted i ON A.VIN = i.VIN;
+    UPDATE Contract
+    SET Place = i.Place
+    FROM Contract c
+    INNER JOIN inserted i ON c.ContrID = i.ContrID;
+
+    UPDATE CUSTOMERS
+    SET NAME = i.NAME
+    FROM CUSTOMERS cu
+    INNER JOIN inserted i ON cu.ContrID = i.ContrID;
 END;
-GO
+GO*/
 
 
 
-INSERT INTO Auto4View (Engine_type, Year_auto, Mark, Model, ContrID)
-VALUES ('Gas', 2022, 'Toyota', 'Corolla', 1);
+INSERT INTO ViewCustContr (Place, Price, Year_birth, Name, Surname)
+VALUES ('йцукен', 123212321, 3020, 'QWE', 'musa');
+GO
+
+
+DELETE FROM ViewCustContr
+WHERE ContrID = 30;
 GO
 SELECT * FROM Auto4
 GO
-DELETE FROM Auto4View
-WHERE Model = 'Corolla';
+/*UPDATE ViewCustContr
+SET Place = 'italy', Name = 'italyanets'
+WHERE ContrID = 31;
+GO*/
+SELECT * FROM CUSTOMERS
+SELECT * FROM Contract
 GO
-SELECT * FROM Auto4
-GO
-UPDATE Auto4View
-SET Year_auto = 2000
-WHERE VIN = 123457;
-GO
-SELECT * FROM Auto4
