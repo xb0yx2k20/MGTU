@@ -12,12 +12,8 @@ CREATE TABLE CUSTOMERS (
 	ContrID INT FOREIGN KEY REFERENCES Contract(ContrID) ON DELETE NO ACTION
 );*/
 
-/*
-INSERT INTO CUSTOMERS(Year_birth, NAME, SURNAME, ContrID)
-VALUES (2006, 'QWER', 'SHGB', 3),
-	   (1991, 'KK,', 'GGO;/G', 4);
-SELECT * FROM CUSTOMERS
-*/
+
+
 /*
 IF OBJECT_ID(N'dbo.ViewCustContr', N'V') IS NOT NULL
     DROP VIEW dbo.ViewCustContr;
@@ -129,16 +125,40 @@ ON ViewCustContr
 INSTEAD OF INSERT
 AS
 BEGIN
-    INSERT INTO Contract (Place, Price)
-    SELECT i.Place, i.Price
-    FROM inserted i;
+    DECLARE @Place VARCHAR(255);
+    DECLARE @Price DECIMAL(18, 2);
+    DECLARE @Year_birth INT;
+    DECLARE @NAME NVARCHAR(255);
+    DECLARE @SURNAME NVARCHAR(255);
 
-    -- Вставка данных в CUSTOMERS с использованием SCOPE_IDENTITY() для получения последнего значения ContrID
-    INSERT INTO CUSTOMERS (Year_birth, NAME, SURNAME, ContrID)
-    SELECT i.Year_birth, i.NAME, i.SURNAME, SCOPE_IDENTITY()
-    FROM inserted i;
+    -- Создание курсора для обхода вставленных строк
+    DECLARE cursor_inserted CURSOR FOR
+    SELECT Place, Price, Year_birth, NAME, SURNAME
+    FROM inserted;
+
+    OPEN cursor_inserted;
+
+    -- Инициализация переменных
+    FETCH NEXT FROM cursor_inserted INTO @Place, @Price, @Year_birth, @NAME, @SURNAME;
+
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        -- Вставка данных в Contract
+        INSERT INTO Contract (Place, Price)
+        VALUES (@Place, @Price);
+
+        -- Вставка данных в CUSTOMERS с использованием SCOPE_IDENTITY() для получения последнего значения ContrID
+        INSERT INTO CUSTOMERS (Year_birth, NAME, SURNAME, ContrID)
+        VALUES (@Year_birth, @NAME, @SURNAME, SCOPE_IDENTITY());
+
+        FETCH NEXT FROM cursor_inserted INTO @Place, @Price, @Year_birth, @NAME, @SURNAME;
+    END;
+
+    CLOSE cursor_inserted;
+    DEALLOCATE cursor_inserted;
 END;
 GO
+
 
 
 -- Удаление
@@ -169,6 +189,10 @@ ON ViewCustContr
 INSTEAD OF UPDATE
 AS
 BEGIN
+	IF UPDATE(ContrID)
+        BEGIN
+            RAISERROR('Stop.', 16, 1);
+        END
     UPDATE Contract
     SET Place = i.Place, Price = i.Price
     FROM Contract c
@@ -184,7 +208,8 @@ GO
 
 
 INSERT INTO ViewCustContr (Place, Price, Year_birth, Name, Surname)
-VALUES ('йцукен', 123212321, 3020, 'QWE', 'musa');
+VALUES ('йцукен', 123212321, 3020, 'QWE', 'musa'),
+		('qwer', 222, 2030, 'edc', 'aser');
 GO
 
 
@@ -201,6 +226,9 @@ WHERE ContrID = 35;
 UPDATE ViewCustContr
 SET Year_birth = 1800
 WHERE ContrID = 35;
+UPDATE ViewCustContr
+SET ContrID = 40
+WHERE ContrID = 41;
 GO
 
 
