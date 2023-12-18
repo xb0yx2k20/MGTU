@@ -1,6 +1,9 @@
 USE lab6;
 select * from Auto
 GO
+CREATE INDEX IX_Auto_YearAuto
+ON Auto (Year_auto);
+GO
 -- Создание представления на основе таблицы Auto4
 CREATE VIEW Auto4View
 AS
